@@ -1,0 +1,30 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Candidate {
+  id      Int                   @id @default(autoincrement())
+  name    String
+  parties CandidatesInParties[]
+}
+
+model Party {
+  id         Int                   @id @default(autoincrement())
+  name       String
+  candidates CandidatesInParties[]
+}
+
+model CandidatesInParties {
+  party       Party     @relation(fields: [partyId], references: [id])
+  partyId     Int
+  candidate   Candidate @relation(fields: [candidateId], references: [id])
+  candidateId Int
+  assignedAt  DateTime  @default(now())
+
+  @@id([partyId, candidateId])
+}
